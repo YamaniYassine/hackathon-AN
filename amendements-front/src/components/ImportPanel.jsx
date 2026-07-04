@@ -1,9 +1,13 @@
 import { useRef, useState } from 'react'
-import { parseAmendmentTxt } from './parseAmendmentTxt'
 
+/**
+ * Permet au personnel de l'Assemblée de récupérer les amendements
+ * à traiter : soit en important un fichier JSON, soit en collant
+ * un tableau JSON directement. L'import PDF sera branché plus tard
+ * (traitement prévu côté backend).
+ */
 export default function ImportPanel({ onImport }) {
   const fileInputRef = useRef(null)
-  const txtInputRef = useRef(null)
   const [error, setError] = useState(null)
   const [pasteOpen, setPasteOpen] = useState(false)
   const [pasteValue, setPasteValue] = useState('')
@@ -34,33 +38,6 @@ export default function ImportPanel({ onImport }) {
     e.target.value = ''
   }
 
-  function handleTxtFilesChange(e) {
-    const files = Array.from(e.target.files || [])
-    if (files.length === 0) return
-
-    Promise.all(
-      files.map(
-        (file) =>
-          new Promise((resolve, reject) => {
-            const reader = new FileReader()
-            reader.onload = () => resolve({ name: file.name, text: reader.result })
-            reader.onerror = () => reject(new Error(`Lecture impossible : ${file.name}`))
-            reader.readAsText(file)
-          })
-      )
-    )
-      .then((results) => {
-        const parsed = results.map(({ name, text }) => parseAmendmentTxt(text, name))
-        setError(null)
-        onImport(parsed, files.length === 1 ? files[0].name : `${files.length} fichiers .txt`)
-      })
-      .catch((err) => {
-        setError(err.message || 'Impossible de lire un des fichiers .txt.')
-      })
-
-    e.target.value = ''
-  }
-
   function handlePasteSubmit() {
     try {
       const json = JSON.parse(pasteValue)
@@ -78,11 +55,11 @@ export default function ImportPanel({ onImport }) {
         <div>
           <h2 className="font-display text-lg text-marine-900">Récupérer des amendements</h2>
           <p className="text-sm text-ink-500 mt-0.5">
-            Importe un fichier JSON, des fichiers .txt, ou colle directement les données.
+            Importe un fichier JSON, ou colle directement les données.
           </p>
         </div>
 
-        <div className="flex gap-2 flex-wrap">
+        <div className="flex gap-2">
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}
@@ -97,23 +74,6 @@ export default function ImportPanel({ onImport }) {
             onChange={handleFileChange}
             className="hidden"
           />
-
-          <button
-            type="button"
-            onClick={() => txtInputRef.current?.click()}
-            className="rounded-md bg-bronze-600 px-4 py-2 text-sm font-medium text-white hover:bg-bronze-700 transition-colors"
-          >
-            Importer des fichiers .txt
-          </button>
-          <input
-            ref={txtInputRef}
-            type="file"
-            accept=".txt,text/plain"
-            multiple
-            onChange={handleTxtFilesChange}
-            className="hidden"
-          />
-
           <button
             type="button"
             onClick={() => setPasteOpen((v) => !v)}

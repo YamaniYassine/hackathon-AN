@@ -4,7 +4,13 @@ import GroupeBadge from './GroupeBadge'
 
 export default function AmendmentDetail({ amendment, onClose }) {
   if (!amendment) {
-    return <div className="h-full" />
+    return (
+      <div className="rounded-lg border border-dashed border-ink-300 bg-white p-8 h-full flex items-center justify-center">
+        <p className="text-sm text-ink-500 text-center">
+          Sélectionne un amendement dans le tableau pour voir son détail.
+        </p>
+      </div>
+    )
   }
 
   const a = amendment

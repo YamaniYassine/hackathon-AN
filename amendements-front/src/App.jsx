@@ -5,7 +5,6 @@ import AmendmentDetail from './components/AmendmentDetail'
 import ClassifyButton from './components/ClassifyButton'
 import sampleAmendments from './data/sampleAmendments.json'
 import { classifyAmendments } from './api/classify'
-import { exportPreJaune } from "./utils/exportPreJaune";
 
 export default function App() {
   const [amendments, setAmendments] = useState([])
@@ -60,9 +59,6 @@ export default function App() {
     }
   }
 
-  function handleExportRTF() {
-    exportPreJaune(amendments);
-}
   // Le personnel peut glisser-déposer une ligne s'il juge le classement de
   // l'IA perfectible. Le rang affiché (position dans la liste) s'adapte
   // automatiquement au nouvel ordre.
@@ -108,10 +104,7 @@ export default function App() {
       <header className="bg-marine-950 text-white">
         <div className="max-w-7xl mx-auto px-6 py-6 flex items-center justify-between flex-wrap gap-3">
           <div>
-            <p className="text-xs uppercase tracking-widest text-marine-100/70">
-              Assemblée nationale — Hackathon
-            </p>
-            <h1 className="font-display text-2xl mt-1">Classement automatique des amendements</h1>
+            <img src="/bourdon_logo.svg" alt="Logo" className="h-10 w-auto" /> test
           </div>
           {amendments.length > 0 && (
             <div className="flex items-center gap-4">
@@ -156,7 +149,7 @@ export default function App() {
         />
 
         <div className="grid grid-cols-1 lg:grid-cols-6 gap-6 items-start">
-          <div className={selected ? 'lg:col-span-4' : 'lg:col-span-6'}>
+          <div className="lg:col-span-4">
             <AmendmentTable
               amendments={amendments}
               selectedId={selectedId}
@@ -165,19 +158,10 @@ export default function App() {
               onDelete={handleDelete}
             />
           </div>
-          {selected && (
-            <div className="lg:col-span-2 lg:sticky lg:top-6">
-              <AmendmentDetail amendment={selected} onClose={() => setSelectedId(null)} />
-            </div>
-          )}
+          <div className="lg:col-span-2 lg:sticky lg:top-6">
+            <AmendmentDetail amendment={selected} onClose={() => setSelectedId(null)} />
+          </div>
         </div>
-        <button
-          type="button"
-          onClick={handleExportRTF}
-          className="rounded-md border border-white/30 px-3 py-1.5 text-sm font-medium text-white hover:bg-white/10 transition-colors"
-        >
-          Exporter le pré-jaune
-        </button>
       </main>
     </div>
   )

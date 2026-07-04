@@ -1,5 +1,6 @@
 import ImpactBadge from './ImpactBadge'
 import GroupeBadge from './GroupeBadge'
+import { downloadRtf } from '../utils/exportRtf'
 
 const MAX_VISIBLE_HEIGHT = 1360
 
@@ -88,6 +89,11 @@ export default function AmendmentTable({ amendments, selectedId, onSelect, onReo
     const fromIndex = Number(e.dataTransfer.getData('text/plain'))
     if (Number.isNaN(fromIndex) || fromIndex === targetIndex) return
     onReorder(fromIndex, targetIndex)
+  }
+
+  function handleExportRtf() {
+    const dateStr = new Date().toISOString().slice(0, 10)
+    downloadRtf(amendments, `prejaune-${dateStr}.rtf`)
   }
 
   return (
@@ -216,6 +222,20 @@ export default function AmendmentTable({ amendments, selectedId, onSelect, onReo
             })}
           </tbody>
         </table>
+      </div>
+
+      <div className="flex items-center justify-between gap-3 border-t border-ink-100 bg-ink-50/50 px-4 py-3">
+        <p className="text-xs text-ink-500">
+          Export au format du préjaune de l'Assemblée (crochets Dc./Id. reconstruits à partir du classement).
+        </p>
+        <button
+          type="button"
+          onClick={handleExportRtf}
+          disabled={!hasClassification}
+          className="rounded-md border border-marine-700 px-3 py-1.5 text-sm font-medium text-marine-800 hover:bg-marine-50 disabled:border-ink-300 disabled:text-ink-400 disabled:cursor-not-allowed transition-colors whitespace-nowrap"
+        >
+          Exporter en préjaune (.rtf)
+        </button>
       </div>
     </div>
   )
